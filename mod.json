@@ -1,5 +1,5 @@
 {
-  "geode": "4.0.1",
+  "geode": "4.2.0",
   "gd": {
     "win": "2.2074"
   },
@@ -38,11 +38,10 @@
 		"description": "Whether you want additional logging (for debugging) when exiting a level. Unless you're a developer, you probably want this off, since it can cause performance issues when you exit a level."
 	}
   },
-  "dependencies": [
-	{
-	  "id": "geode.node-ids",
-	  "version": ">=v1.12.0",
-	  "importance": "required"
-	}
-  ]
+  "dependencies": {
+    "geode.node-ids": {
+      "version": ">=v1.12.0",
+      "importance": "required"
+    }
+  }
 }
