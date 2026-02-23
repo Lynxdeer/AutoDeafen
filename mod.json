@@ -1,0 +1,39 @@
+{
+	"geode": "5.0.0-beta.4",
+	"gd": {
+		"win": "2.2081"
+	},
+	"id": "lynxdeer.autodeafen",
+	"description": "Makes your loud friends shut up.",
+	"tags": ["enhancement", "utility"],
+	"links": {
+		"source": "https://github.com/Lynxdeer/AutoDeafen"
+	},
+	"name": "AutoDeafen",
+	"version": "v2.0.0",
+	"developer": "Lynxdeer",
+	"dependencies": { "geode.node-ids": ">=v1.22.0" },
+	"settings": {
+		"default_enabled": {
+			"name": "Enabled By Default",
+			"type": "bool",
+			"default": false,
+			"description": "Whether AutoDeafen is <co>enabled by default</c> when you load into a level for the first time. Basically enables AutoDeafen globally rather than per-level."
+		},
+		"default_percentage": {
+			"name": "Default Percentage",
+			"control": { "input": true },
+			"type": "int",
+			"default": 50,
+			"min": 0,
+			"max": 100,
+			"description": "The <co>default percentage to deafen at</c> when you load into a level for the first time."
+		},
+		"practice": {
+			"name": "Enabled In Practice Mode",
+			"type": "bool",
+			"default": false,
+			"description": "Whether AutoDeafen should be enabled during practice mode. Dunno why you'd ever want this, but it's there if you do."
+		}
+	}
+}
