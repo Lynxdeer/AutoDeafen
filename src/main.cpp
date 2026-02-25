@@ -1,4 +1,7 @@
 
+std::string CLIENT_ID = "";
+std::string CLIENT_SECRET = "";
+
 std::string DISCORD_ACCESS_TOKEN;
 std::string DISCORD_REFRESH_TOKEN;
 long long TOKEN_EXPIRY = 0;
@@ -75,6 +78,7 @@ class $modify(PlayLayer) {
     void postUpdate(float p0) {
 		PlayLayer::postUpdate(p0);
 		if (this->m_isPracticeMode && !Mod::get()->getSettingValue<bool>("practice")) { return; }
+    	if (!DEAFEN_ENABLED) return;
     	if (this->m_hasCompletedLevel) {
     		if (deafenedThisAttempt) {
     			ipc::deafen(false);
@@ -142,7 +146,7 @@ class $modify(MyPauseLayer, PauseLayer) {
 		if (ipc::authenticated) {
 			openModPopup();
 		} else {
-			gui::openAuthPopup();
+			gui::openSetupPopup();
 		}
 	}
 	void customSetup() {

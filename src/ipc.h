@@ -131,7 +131,9 @@ namespace ipc {
 
         discordPipe = pipe;
 
-        sendFrame(0, R"({"v": 1, "client_id": "1289578567151390793"})");
+        // have to make everyone make their own application because IPC has been in a "private beta" for 7 fucking years
+        // genuinely so fed up with discord bro I made a whole mod and set up a whole web server to find out I can't use my own oauth for ipc
+        sendFrame(0, R"({"v": 1, "client_id": ")" + CLIENT_ID + "\"}");
         if (!drainFrame(pipe)) { CloseHandle(pipe); discordPipe = INVALID_HANDLE_VALUE; return false; }
 
         sendFrame(1, R"({"cmd": "AUTHENTICATE", "args": {"access_token": ")" + DISCORD_ACCESS_TOKEN + R"("},"nonce": "auth"})");
@@ -145,7 +147,7 @@ namespace ipc {
         return true;
     }
 
-    // todo: there's still a fucking lagspike like 40% of the time and I don't know why
+    // todo: there's still a fucking lagspike like 40% of the time need to find out why
     inline void deafen(bool deafen) {
         if (!authenticated || discordPipe == INVALID_HANDLE_VALUE) return;
 

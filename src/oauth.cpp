@@ -19,6 +19,9 @@
 using namespace geode::async;
 using namespace geode::utils;
 
+extern std::string CLIENT_ID;
+extern std::string CLIENT_SECRET;
+
 namespace helpers {
     extern std::function<void(web::WebResponse)> webHandler;
 }
@@ -27,10 +30,6 @@ size_t writeCallback(void* data, size_t size, size_t nmemb, void* userp) {
     ((std::string*)userp)->append((char*)data, size * nmemb);
     return size * nmemb;
 }
-
-struct code_request {
-    std::string code;
-};
 
 void oauth::serverThread() {
 
@@ -76,32 +75,39 @@ void oauth::serverThread() {
         std::string oauth_code = request.substr(start, end - start);
         // geode::log("got code {} ", oauth_code);
 
-        // todo: find a better way to do this
-        matjson::Value json = matjson::Value::parse("{\"code\": \"" + oauth_code + "\"}").unwrap();
+        std::string params =
+            "client_id=" + CLIENT_ID +
+            "&client_secret=" + CLIENT_SECRET +
+            "&grant_type=authorization_code"
+            "&code=" + oauth_code +
+            "&redirect_uri=http://localhost:8000";
+
 
         static TaskHolder<web::WebResponse> listener;
 
         auto req = web::WebRequest();
-        req.header("Content-Type", "application/json");
-        req.bodyJSON(json);
+        req.header("Content-Type", "application/x-www-form-urlencoded");
+        req.body(std::vector<uint8_t>(params.begin(), params.end()));
 
-        // geode::prelude::log::info("sending 12345");
+        geode::prelude::log::info("sending auth");
 
+        // The code for where the backend points to is in the "backend" folder of this repository
         listener.spawn(
-            req.post("http://localhost:3000/auth"),
+            req.post("https://discord.com/api/oauth2/token"),
             helpers::webHandler
         );
 
-        // geode::prelude::log::info("sent");
+        geode::prelude::log::info("sent auth");
         // listener.setFilter(req.post("http://localhost:3000/auth"));
 
     }
 
+    // todo: only make it say all set when you're actually all set
     auto response =
         "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
         "<h2 style='font-family:sans-serif'>All set!</h2>"
         "<p style='font-family:sans-serif'>You can close this tab and go back to Geometry dash!</p>"
-        "<script>window.close();</script>";
+        "<script>window.close();</script>"; // todo this isnt working
     send(csock, response, (int)strlen(response), 0);
 
     closesocket(csock);

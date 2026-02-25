@@ -7,27 +7,141 @@
 #include <Geode/ui/GeodeUI.hpp>
 #include <Geode/ui/Popup.hpp>
 
+/**
+ * To anyone reading my code- I initially made this mod with the intention to have my own application interface with the discord client.
+ * However, after finding out that the mod wasn't working on other peoples' machines, I discovered that RPC has been in a "private beta" for 7 years.
+ * Therefore, I have to have everyone create their own application. Kinda annoying but still better than keybinds.
+ */
+class AuthLayer : public geode::Popup {
+public:
+    void onClose(CCObject* a) override {
+        Popup::onClose(a);
+        currentlyInMenu = false;
+    }
+    static AuthLayer* create() {
+        auto ret = new AuthLayer;
+        if (ret && ret->init()) {
+            ret->autorelease();
+            return ret;
+        }
+        delete ret;
+        return nullptr;
+    }
+protected:
+    CCLabelBMFont* clientId;
+    CCLabelBMFont* clientSecret;
+    void openTutorial(CCObject*) {
+        ShellExecuteA(nullptr, "open", "https://lynxdeer.xyz/autodeafen_setup.html", nullptr, nullptr, SW_SHOWNORMAL);
+        log::info("opened docs");
+    }
+    void pasteClientId(CCObject*) {
 
+        std::string paste = helpers::getClipboardText();
+        log::info("pasted client id {}", paste);
+
+        CLIENT_ID = paste;
+        clientId->setString(paste.c_str());
+
+    }
+    void pasteClientSecret(CCObject*) {
+
+        std::string paste = helpers::getClipboardText();
+        log::info("pasted client secret {}", paste);
+
+        CLIENT_SECRET = paste;
+        clientSecret->setString(paste.c_str());
+
+    }
+    void done(CCObject* c) {
+
+        log::info("next");
+        oauth::startServer();
+        ShellExecuteA(nullptr, "open", ("https://discord.com/oauth2/authorize?client_id=" + CLIENT_ID + "&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8000&scope=rpc.voice.write+rpc").c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+        AuthLayer::onClose(c);
+
+
+    }
+    bool init() override {
+        if (!geode::Popup::init(300, 240)) return false;
+        currentlyInMenu = true;
+
+        CCPoint topMiddle = ccp(m_size.width/2.f, m_size.height);
+
+        auto topLabel = CCLabelBMFont::create("Setup", "goldFont.fnt");
+        topLabel->setAnchorPoint({0.5, 0.5});
+        topLabel->setScale(1.0f);
+        topLabel->setPosition(topMiddle + ccp(0, 5));
+
+        clientId = CCLabelBMFont::create("...", "chatFont-uhd.fnt");
+        clientId->setAnchorPoint({0.5, 0.5});
+        clientId->setScale(0.5f);
+        clientId->setPosition(topMiddle + ccp(0, -60));
+
+        clientSecret = CCLabelBMFont::create("...", "chatFont-uhd.fnt");
+        clientSecret->setAnchorPoint({0.5, 0.5});
+        clientSecret->setScale(0.5f);
+        clientSecret->setPosition(topMiddle + ccp(0, -120));
+
+        auto tutorialButton = CCMenuItemSpriteExtra::create(ButtonSprite::create("Open Tutorial"), this, menu_selector(AuthLayer::openTutorial));
+        tutorialButton->setAnchorPoint({0.5, 0.5});
+        tutorialButton->setPosition(topMiddle + ccp(0, -30));
+
+        auto pasteClientIdButton = CCMenuItemSpriteExtra::create(ButtonSprite::create("Paste Client ID"), this, menu_selector(AuthLayer::pasteClientId));
+        pasteClientIdButton->setAnchorPoint({0.5, 0.5});
+        pasteClientIdButton->setPosition(topMiddle + ccp(0, -90));
+
+        auto pasteClientSecretButton = CCMenuItemSpriteExtra::create(ButtonSprite::create("Paste Client Secret"), this, menu_selector(AuthLayer::pasteClientSecret));
+        pasteClientSecretButton->setAnchorPoint({0.5, 0.5});
+        pasteClientSecretButton->setPosition(topMiddle + ccp(0, -150));
+
+
+        auto doneButton = CCMenuItemSpriteExtra::create(ButtonSprite::create("Next"), this, menu_selector(AuthLayer::done));
+        doneButton->setAnchorPoint({0.5, 0.5});
+        doneButton->setPosition(topMiddle + ccp(0, -200));
+
+        auto menu = CCMenu::create();
+        menu -> setPosition( {0, 0} );
+
+        menu->addChild(topLabel);
+        menu->addChild(clientId);
+        menu->addChild(clientSecret);
+        menu->addChild(tutorialButton);
+        menu->addChild(pasteClientIdButton);
+        menu->addChild(pasteClientSecretButton);
+        menu->addChild(doneButton);
+
+        m_mainLayer -> addChild(menu);
+
+        return true;
+    }
+};
 
 namespace gui {
-    
-inline void openAuthPopup() {
-    
-    oauth::startServer();
-    geode::createQuickPopup(
-        "AutoDeafen",
-        "<cj>The mod needs to get permissions from your discord account to work.</c> <cg>Press 'Open' to open a link to give permissions.</c>",
-        "Later", "Open",
-        [](auto, bool btn2) {
-            if (btn2) {
-                log::info("opening authorization link");
-                // can add rpc.voice.read if needed later but for now it is not
-                ShellExecuteA(nullptr, "open", "https://discord.com/oauth2/authorize?client_id=1289578567151390793&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8000&scope=rpc.voice.write+rpc", nullptr, nullptr, SW_SHOWNORMAL);
+
+    // todo find better name
+    inline void openPastingSetup() {
+        AuthLayer::create()->show();
+    }
+
+    inline void openSetupPopup() {
+
+        oauth::startServer();
+        geode::createQuickPopup(
+            "AutoDeafen",
+            "<cj>AutoDeafen requires some setting-up.</c> <cg>Press 'Open' to open a tutorial link on how to set up autodeafen.</c>",
+            "Later", "Open",
+            [](auto, bool btn2) {
+                if (btn2) {
+                    log::info("opening docs");
+                    openPastingSetup();
+                    ShellExecuteA(nullptr, "open", "https://lynxdeer.xyz/autodeafen_setup.html", nullptr, nullptr, SW_SHOWNORMAL);
+                    log::info("opened docs");
+                }
             }
-        }
-    );
-    
-}
+        );
+
+
+    }
     
 }
 
@@ -36,8 +150,8 @@ inline void openAuthPopup() {
 class ConfigLayer : public geode::Popup {
     public:
         TextInput* percentageInput;
-        void reAuthenticate(CCObject*) {
-            gui::openAuthPopup();
+        void runSetup(CCObject*) {
+            gui::openSetupPopup();
         }
         void toggleEnabled(CCObject*) {
             DEAFEN_ENABLED = !DEAFEN_ENABLED;
@@ -45,7 +159,7 @@ class ConfigLayer : public geode::Popup {
         void onClose(CCObject* a) override {
             Popup::onClose(a);
             if (percentageInput != nullptr && !percentageInput->getString().empty())
-                DEAFEN_PERCENTAGE = stoi(percentageInput -> getString());
+                DEAFEN_PERCENTAGE = geode::utils::numFromString<int>(percentageInput -> getString()).ok().value_or(Mod::get()->getSettingValue<int>("default_percentage"));
             currentlyInMenu = false;
         }
         static ConfigLayer* create() {
@@ -102,6 +216,7 @@ class ConfigLayer : public geode::Popup {
                 percentageInput = TextInput::create(100.f, "%");
 
                 percentageInput->setFilter("0123456789");
+                percentageInput->setWidth(40);
                 percentageInput->setPosition(enabledButton->getPosition() + ccp(0, -40));
                 percentageInput->setScale(0.85f);
                 percentageInput->setMaxCharCount(2);
@@ -113,7 +228,7 @@ class ConfigLayer : public geode::Popup {
                 percentageLabel->setScale(0.7f);
                 percentageLabel->setPosition(topLeftCorner + ccp(60, -100));
             } else {
-                reauthLabel = CCLabelBMFont::create("Authentication Failed! Press the Re-Authenticate button to try again.", "bigFont.fnt");
+                reauthLabel = CCLabelBMFont::create("Authentication Failed! Press the Re-Setup button to try again.", "bigFont.fnt");
                 // keybindLabel = CCLabelBMFont::create("To use the mod, press the \n<cg>Edit Keybind</c> button\nand press your \ndiscord <co>Toggle Deafen</c> keybind \nset in \n<cb>Discord Settings</c> > <cp>Keybinds</c>", "chatFont-uhd.fnt");
                 reauthLabel->setAnchorPoint({0.5, 0});
                 reauthLabel->setScale(0.4f);
@@ -122,9 +237,9 @@ class ConfigLayer : public geode::Popup {
             }
 
             auto reAuthButton = CCMenuItemSpriteExtra::create(
-                ButtonSprite::create("Re-Authenticate"),
+                ButtonSprite::create("Re-Setup"),
                 this,
-                menu_selector(ConfigLayer::reAuthenticate)
+                menu_selector(ConfigLayer::runSetup)
             );
             reAuthButton->setAnchorPoint({0.5, 0.5});
             reAuthButton->setPosition(topLeftCorner + ccp(142, -150));
@@ -164,7 +279,7 @@ class ConfigLayer : public geode::Popup {
 
 inline void openModPopup() {
 
-    auto layer = ConfigLayer::create();
-    layer->show();
+    // this a memory leak I think but its not significant (todo: test)
+    ConfigLayer::create()->show();
 
 }
