@@ -82,6 +82,7 @@ namespace ipc {
         ResetEvent(overlapped.hEvent);
         if (!ReadFile(pipe, payload.data(), length, &read, &overlapped) && GetLastError() == ERROR_IO_PENDING) WaitForSingleObject(overlapped.hEvent, 5000);
         if (!GetOverlappedResult(pipe, &overlapped, &read, FALSE) || read != (DWORD)length) return cleanup(false);
+        // log::info("rec frame | op={} | len={} | payload={}", opcode, length, payload);
 
         return cleanup(true);
     }
@@ -121,6 +122,7 @@ namespace ipc {
             CloseHandle(overlapped.hEvent);
         }
 
+        log::info("pipe invalidated");
         authenticated = false;
         discordPipe = INVALID_HANDLE_VALUE;
     }

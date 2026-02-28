@@ -1,5 +1,5 @@
 {
-	"geode": "5.0.0-beta.4",
+	"geode": "5.1.0",
 	"gd": {
 		"win": "2.2081"
 	},
@@ -10,7 +10,7 @@
 		"source": "https://github.com/Lynxdeer/AutoDeafen"
 	},
 	"name": "AutoDeafen",
-	"version": "v2.0.0",
+	"version": "v2.0.1",
 	"developer": "Lynxdeer",
 	"dependencies": { "geode.node-ids": ">=v1.22.0" },
 	"settings": {

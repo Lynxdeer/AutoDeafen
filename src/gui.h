@@ -40,6 +40,8 @@ protected:
         log::info("pasted client id {}", paste);
 
         CLIENT_ID = paste;
+        Mod::get()->setSavedValue<std::string>("CLIENT_ID", CLIENT_ID);
+
         clientId->setString(paste.c_str());
 
     }
@@ -49,6 +51,8 @@ protected:
         log::info("pasted client secret {}", paste);
 
         CLIENT_SECRET = paste;
+        Mod::get()->setSavedValue<std::string>("CLIENT_SECRET", CLIENT_SECRET);
+
         clientSecret->setString(paste.c_str());
 
     }
@@ -149,7 +153,7 @@ namespace gui {
 // this has to go outside of the namespace because otherwise msvc kills itself
 class ConfigLayer : public geode::Popup {
     public:
-        TextInput* percentageInput;
+        TextInput* percentageInput = nullptr;
         void runSetup(CCObject*) {
             gui::openSetupPopup();
         }

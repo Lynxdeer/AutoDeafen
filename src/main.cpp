@@ -29,9 +29,14 @@ using namespace geode::prelude;
 #include <cocos2d.h>
 
 $on_mod(Loaded) {
+	if (Mod::get()->hasSavedValue("CLIENT_ID")) CLIENT_ID = Mod::get()->getSavedValue<std::string>("CLIENT_ID");
+	if (Mod::get()->hasSavedValue("CLIENT_SECRET")) CLIENT_SECRET = Mod::get()->getSavedValue<std::string>("CLIENT_SECRET");
     if (Mod::get()->hasSavedValue("DISCORD_ACCESS_TOKEN")) {
 
+    	log::info("loaded");
+
         if (!Mod::get()->hasSavedValue("DISCORD_REFRESH_TOKEN") || !Mod::get()->hasSavedValue("TOKEN_EXPIRY")) return;
+    	log::info("passed refresh token check");
 
         DISCORD_REFRESH_TOKEN = Mod::get()->getSavedValue<std::string>("DISCORD_REFRESH_TOKEN");
         TOKEN_EXPIRY = Mod::get()->getSavedValue<long long>("TOKEN_EXPIRY");
@@ -143,7 +148,8 @@ class $modify(MyPauseLayer, PauseLayer) {
 	}
 
 	void onAutoDeafenMenuClick(CCObject* target) {
-		if (ipc::authenticated) {
+		if (!DISCORD_ACCESS_TOKEN.empty()) {
+		// if (ipc::authenticated) {
 			openModPopup();
 		} else {
 			gui::openSetupPopup();
