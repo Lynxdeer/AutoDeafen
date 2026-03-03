@@ -10,7 +10,7 @@
 		"source": "https://github.com/Lynxdeer/AutoDeafen"
 	},
 	"name": "AutoDeafen",
-	"version": "v2.0.1",
+	"version": "v2.0.2",
 	"developer": "Lynxdeer",
 	"dependencies": { "geode.node-ids": ">=v1.22.0" },
 	"settings": {
