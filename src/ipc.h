@@ -125,6 +125,7 @@ namespace ipc {
         log::info("pipe invalidated");
         authenticated = false;
         discordPipe = INVALID_HANDLE_VALUE;
+
     }
 
     inline bool initializeDiscordAuth() {
@@ -154,7 +155,11 @@ namespace ipc {
         if (!authenticated || discordPipe == INVALID_HANDLE_VALUE) return;
 
         // async because there's otherwise a lagspike on deafen and people will 100% complain
-        // I think there's a geode way to do this but I tried and couldn't figure it out without doing some bullshit so im using a normal thread
+        // async::spawn(nullptr, [] -> arc::Future<> {
+        //
+        // });
+
+        // todo replace this with the geode way of async when I figure out how to do that
         std::thread([deafen] {
             sendFrame(1, R"({"cmd": "SET_VOICE_SETTINGS", "args": { "deaf": )" + std::string(deafen ? "true" : "false") + R"( }, "nonce": "deafen" })");
         }).detach();

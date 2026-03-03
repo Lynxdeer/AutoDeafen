@@ -95,15 +95,13 @@ class $modify(PlayLayer) {
 
 		if (getCurrentPercentInt() >= DEAFEN_PERCENTAGE && !deafenedThisAttempt) {
 			ipc::deafen(true);
-            deafenedThisAttempt = true; // todo: find out if quitting the lvl breaks this
+            deafenedThisAttempt = true;
 		}
 	}
     void resetLevel() {
     	PlayLayer::resetLevel();
-    	// if (deafenedThisAttempt) {
     	deafenedThisAttempt = false;
     	hasDied = false;
-    	// }
 	}
 
 };

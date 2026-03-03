@@ -50,12 +50,6 @@ namespace helpers {
 		return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	}
 
-
-	// todo find better variable name
-
-	// std::function<void(web::WebResponse)>
-	// <lambda void(web::WebResponse res)>
-
 	inline std::function<void(web::WebResponse)> webHandler = [] (web::WebResponse res) {
 
 		log::info("1");

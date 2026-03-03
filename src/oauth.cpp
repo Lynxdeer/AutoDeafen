@@ -67,7 +67,13 @@ void oauth::serverThread() {
     }
 
     std::string request(buffer);
+
+    auto response =
+            "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
+            "<h2 style='font-family:sans-serif'>There may be an error?</h2>"
+            "<p style='font-family:sans-serif'>There's no oauth code, but also no error from discord. Something went wrong.</p>";
     size_t pos = request.find("GET /?code=");
+    size_t posBad = request.find("GET /?error=");
     if (pos != std::string::npos) {
 
         auto start = pos + 11;
@@ -91,7 +97,6 @@ void oauth::serverThread() {
 
         geode::prelude::log::info("sending auth");
 
-        // The code for where the backend points to is in the "backend" folder of this repository
         listener.spawn(
             req.post("https://discord.com/api/oauth2/token"),
             helpers::webHandler
@@ -99,15 +104,20 @@ void oauth::serverThread() {
 
         geode::prelude::log::info("sent auth");
         // listener.setFilter(req.post("http://localhost:3000/auth"));
+        response =
+            "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
+            "<h2 style='font-family:sans-serif'>All set!</h2>"
+            "<p style='font-family:sans-serif'>You can close this tab and go back to Geometry dash!</p>";
 
+    } else if (posBad != std::string::npos) {
+
+        // todo maybe substring the error code
+        response =
+            "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
+            "<h2 style='font-family:sans-serif'>Discord Returned an OAuth error</h2>"
+            "<p style='font-family:sans-serif'>Check this page's url for a (somewhat) more detailed description. Try the troubleshooting steps on the tutorial site.</p>";
     }
 
-    // todo: only make it say all set when you're actually all set
-    auto response =
-        "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n"
-        "<h2 style='font-family:sans-serif'>All set!</h2>"
-        "<p style='font-family:sans-serif'>You can close this tab and go back to Geometry dash!</p>"
-        "<script>window.close();</script>"; // todo this isnt working
     send(csock, response, (int)strlen(response), 0);
 
     closesocket(csock);
