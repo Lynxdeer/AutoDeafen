@@ -54,10 +54,15 @@ namespace helpers {
 
 		log::info("1");
 
+		webRequestDone = true;
 		if (!res.ok()) {
 			log::info("res not ok {} {}", res.code(), res.error());
+			resDidntReturnOk = true;
+			responseCode = res.code();
+			responseError = res.error();
 			return;
 		}
+		resDidntReturnOk = false;
 		log::info("2");
 
 		// todo I think I could improve this later but this fix works ifne for now

@@ -232,7 +232,16 @@ class ConfigLayer : public geode::Popup {
                 percentageLabel->setScale(0.7f);
                 percentageLabel->setPosition(topLeftCorner + ccp(60, -100));
             } else {
-                reauthLabel = CCLabelBMFont::create("Authentication Failed! Press the Re-Setup button to try again.", "bigFont.fnt");
+                // I made a troubleshooting point on the webpage for this until the following update is verified
+                if (resDidntReturnOk) {
+                    reauthLabel = CCLabelBMFont::create(("The mod made an unsuccessful request to discord \nResponse Code = " + std::to_string(responseCode) + "\nError = '" + responseError + "'\n\nTry restarting the game- if that doesn't work,\nPress the Re-Setup button to try setup again.").c_str(), "bigFont.fnt");
+                } else if (!webRequestDone) {
+                    reauthLabel = CCLabelBMFont::create("The mod is making a request to discord for permission.\nThis may take a second.\nIf this takes more than 30 seconds, try restarting your game\nor pressing the re-setup button to try setup again.", "bigFont.fnt");
+                } else if (!ipc::authenticated) {
+                    reauthLabel = CCLabelBMFont::create("The mod has not connected to your discord client yet.\nIf this takes too long, try restarting your game\nor pressing the Re-Setup button below to setup again.", "bigFont.fnt");
+                } else {
+                    reauthLabel = CCLabelBMFont::create("The mod could not connect to discord for an unknown reason. Please re-setup.", "bigFont.fnt");
+                }
                 // keybindLabel = CCLabelBMFont::create("To use the mod, press the \n<cg>Edit Keybind</c> button\nand press your \ndiscord <co>Toggle Deafen</c> keybind \nset in \n<cb>Discord Settings</c> > <cp>Keybinds</c>", "chatFont-uhd.fnt");
                 reauthLabel->setAnchorPoint({0.5, 0});
                 reauthLabel->setScale(0.4f);

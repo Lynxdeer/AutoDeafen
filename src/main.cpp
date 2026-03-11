@@ -14,12 +14,16 @@ bool hasDied = false;
 
 bool currentlyInMenu = false;
 
+bool webRequestDone = false;
+bool resDidntReturnOk = false;
+int responseCode = 0;
+std::string responseError;
+
 #include <Geode/Geode.hpp>
 using namespace geode::prelude;
 
 #include "ipc.h"
 #include "helpers.h"
-#include "oauth.h"
 #include "gui.h"
 
 #include <Geode/modify/MenuLayer.hpp>
