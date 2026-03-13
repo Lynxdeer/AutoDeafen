@@ -23,7 +23,7 @@
 		"default_percentage": {
 			"name": "Default Percentage",
 			"control": { "input": true },
-			"type": "int",
+			"type": "float",
 			"default": 50,
 			"min": 0,
 			"max": 100,

@@ -2,12 +2,24 @@
 
 #include <windows.h>
 #include <shellapi.h>
+#include <cmath>
 
 #include <Geode/Geode.hpp>
 #include <Geode/ui/GeodeUI.hpp>
 #include <Geode/ui/Popup.hpp>
 
 #include "oauth.h"
+
+inline std::string formatPercentageString(float value) {
+    auto formatted = std::to_string(std::round(value * 100000.f) / 100000.f);
+    formatted.erase(formatted.find_last_not_of('0') + 1);
+
+    if (!formatted.empty() && formatted.back() == '.') {
+        formatted.pop_back();
+    }
+
+    return formatted;
+}
 
 /**
  * To anyone reading my code- I initially made this mod with the intention to have my own application interface with the discord client.
@@ -221,13 +233,13 @@ class ConfigLayer : public geode::Popup {
 
                 percentageInput = TextInput::create(100.f, "%");
 
-                percentageInput->setFilter("0123456789.");
-                percentageInput->setWidth(40);
+                percentageInput->setCommonFilter(geode::CommonFilter::Float);
+                percentageInput->setWidth(80);
                 percentageInput->setPosition(enabledButton->getPosition() + ccp(0, -40));
                 percentageInput->setScale(0.85f);
-                percentageInput->setMaxCharCount(2);
+                percentageInput->setMaxCharCount(7);
                 percentageInput->setEnabled(true);
-                percentageInput->setString(std::to_string(DEAFEN_PERCENTAGE));
+                percentageInput->setString(formatPercentageString(DEAFEN_PERCENTAGE));
 
                 percentageLabel = CCLabelBMFont::create("Percent", "bigFont.fnt");
                 percentageLabel->setAnchorPoint({0, 0.5});

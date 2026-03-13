@@ -1,5 +1,6 @@
 # v2.0.3
-- Added support for decimal percentages ([#2](https://github.com/Lynxdeer/AutoDeafen/pull/2/) by [@TreehouseFalcon](https://github.com/TreehouseFalcon/))
+### [#2](https://github.com/Lynxdeer/AutoDeafen/pull/2/) by [@TreehouseFalcon](https://github.com/TreehouseFalcon/)
+- Added support for fractional percentages
 - Updated Geode version to 5.3.0
 
 ## v2.0.2
