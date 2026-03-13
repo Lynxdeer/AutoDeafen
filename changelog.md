@@ -1,3 +1,6 @@
+# v2.0.3
+- Added support for decimal percentages (#1 by [@TreehouseFalcon](https://github.com/TreehouseFalcon/))
+- Updated Geode version to 5.3.0
 # v2.0.2
 - Added a proper changelog file
 # v2.0.1

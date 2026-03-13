@@ -8,7 +8,7 @@ long long TOKEN_EXPIRY = 0;
 
 std::string CURRENT_LEVEL;
 bool DEAFEN_ENABLED = false;
-int DEAFEN_PERCENTAGE = 50;
+float DEAFEN_PERCENTAGE = 50.0f;
 bool deafenedThisAttempt = false;
 bool hasDied = false;
 
@@ -75,7 +75,7 @@ class $modify(PlayLayer) {
     	if (Mod::get()->hasSavedValue(CURRENT_LEVEL)) {
     		auto value = Mod::get()->getSavedValue<matjson::Value>(CURRENT_LEVEL);
     		DEAFEN_ENABLED = value["e"].asBool().ok().value_or(defaultEnabled);
-    		DEAFEN_PERCENTAGE = value["p"].asInt().ok().value_or(defaultDeafenPercentage);
+    		DEAFEN_PERCENTAGE = value["p"].as<float>().ok().value_or(defaultDeafenPercentage);
     	} else {
     		DEAFEN_ENABLED = defaultEnabled;
     		DEAFEN_PERCENTAGE = defaultDeafenPercentage;

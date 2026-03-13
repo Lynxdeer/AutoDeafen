@@ -165,7 +165,7 @@ class ConfigLayer : public geode::Popup {
         void onClose(CCObject* a) override {
             Popup::onClose(a);
             if (percentageInput != nullptr && !percentageInput->getString().empty())
-                DEAFEN_PERCENTAGE = geode::utils::numFromString<int>(percentageInput -> getString()).ok().value_or(Mod::get()->getSettingValue<int>("default_percentage"));
+                DEAFEN_PERCENTAGE = geode::utils::numFromString<float>(percentageInput -> getString()).ok().value_or(Mod::get()->getSettingValue<float>("default_percentage"));
             currentlyInMenu = false;
         }
         static ConfigLayer* create() {
@@ -221,7 +221,7 @@ class ConfigLayer : public geode::Popup {
 
                 percentageInput = TextInput::create(100.f, "%");
 
-                percentageInput->setFilter("0123456789");
+                percentageInput->setFilter("0123456789.");
                 percentageInput->setWidth(40);
                 percentageInput->setPosition(enabledButton->getPosition() + ccp(0, -40));
                 percentageInput->setScale(0.85f);
