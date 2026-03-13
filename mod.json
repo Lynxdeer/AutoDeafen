@@ -1,18 +1,23 @@
 {
-	"geode": "5.1.0",
+	"geode": "5.3.0",
 	"gd": {
 		"win": "2.2081"
 	},
 	"id": "lynxdeer.autodeafen",
 	"description": "Makes your loud friends shut up when it counts.",
-	"tags": ["enhancement", "utility"],
+	"tags": [
+		"enhancement",
+		"utility"
+	],
 	"links": {
 		"source": "https://github.com/Lynxdeer/AutoDeafen"
 	},
 	"name": "AutoDeafen",
 	"version": "v2.0.2",
 	"developer": "Lynxdeer",
-	"dependencies": { "geode.node-ids": ">=v1.22.0" },
+	"dependencies": {
+		"geode.node-ids": ">=v1.22.0"
+	},
 	"settings": {
 		"default_enabled": {
 			"name": "Enabled By Default",
@@ -22,8 +27,10 @@
 		},
 		"default_percentage": {
 			"name": "Default Percentage",
-			"control": { "input": true },
-			"type": "int",
+			"control": {
+				"input": true
+			},
+			"type": "float",
 			"default": 50,
 			"min": 0,
 			"max": 100,

@@ -7,6 +7,8 @@
 #include <Geode/ui/GeodeUI.hpp>
 #include <Geode/ui/Popup.hpp>
 
+#include "oauth.h"
+
 /**
  * To anyone reading my code- I initially made this mod with the intention to have my own application interface with the discord client.
  * However, after finding out that the mod wasn't working on other peoples' machines, I discovered that RPC has been in a "private beta" for 7 years.
