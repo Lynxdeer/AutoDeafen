@@ -8,7 +8,7 @@ long long TOKEN_EXPIRY = 0;
 
 std::string CURRENT_LEVEL;
 bool DEAFEN_ENABLED = false;
-int DEAFEN_PERCENTAGE = 50;
+float DEAFEN_PERCENTAGE = 50.0f;
 bool deafenedThisAttempt = false;
 bool hasDied = false;
 
@@ -69,13 +69,13 @@ class $modify(PlayLayer) {
 
     	CURRENT_LEVEL = std::to_string(id) + "-" + std::to_string(levelType);
 
-    	bool defaultEnabled = Mod::get()->getSettingValue<int>("default_enabled");
-    	int defaultDeafenPercentage = Mod::get()->getSettingValue<int>("default_percentage");
+    	bool defaultEnabled = Mod::get()->getSettingValue<bool>("default_enabled");
+    	float defaultDeafenPercentage = Mod::get()->getSettingValue<float>("default_percentage");
 
     	if (Mod::get()->hasSavedValue(CURRENT_LEVEL)) {
     		auto value = Mod::get()->getSavedValue<matjson::Value>(CURRENT_LEVEL);
     		DEAFEN_ENABLED = value["e"].asBool().ok().value_or(defaultEnabled);
-    		DEAFEN_PERCENTAGE = value["p"].asInt().ok().value_or(defaultDeafenPercentage);
+    		DEAFEN_PERCENTAGE = value["p"].as<float>().ok().value_or(defaultDeafenPercentage);
     	} else {
     		DEAFEN_ENABLED = defaultEnabled;
     		DEAFEN_PERCENTAGE = defaultDeafenPercentage;
@@ -97,7 +97,7 @@ class $modify(PlayLayer) {
     		return;
     	}
 
-		if (getCurrentPercentInt() >= DEAFEN_PERCENTAGE && !deafenedThisAttempt) {
+		if (getCurrentPercent() >= DEAFEN_PERCENTAGE && !deafenedThisAttempt) {
 			ipc::deafen(true);
             deafenedThisAttempt = true;
 		}
@@ -133,8 +133,8 @@ class $modify(MyPauseLayer, PauseLayer) {
 		deafenedThisAttempt = false;
 		hasDied = false;
 
-		bool defaultEnabled = Mod::get()->getSettingValue<int>("default_enabled");
-		int defaultDeafenPercentage = Mod::get()->getSettingValue<int>("default_percentage");
+		bool defaultEnabled = Mod::get()->getSettingValue<bool>("default_enabled");
+		float defaultDeafenPercentage = Mod::get()->getSettingValue<float>("default_percentage");
 
 		if (!(DEAFEN_ENABLED == defaultEnabled && defaultDeafenPercentage == DEAFEN_PERCENTAGE)) {
 
