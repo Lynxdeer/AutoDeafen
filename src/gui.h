@@ -152,7 +152,7 @@ namespace gui {
                 if (btn2) {
                     log::info("opening docs");
                     openPastingSetup();
-                    ShellExecuteA(nullptr, "open", "https://lynxdeer.xyz/autodeafen_setup.html", nullptr, nullptr, SW_SHOWNORMAL);
+                    ShellExecuteA(nullptr, "open", "https://lynxdeer.com/autodeafen_setup.html", nullptr, nullptr, SW_SHOWNORMAL);
                     log::info("opened docs");
                 }
             }
@@ -245,7 +245,7 @@ class ConfigLayer : public geode::Popup {
                 percentageLabel->setAnchorPoint({0, 0.5});
                 percentageLabel->setScale(0.7f);
                 percentageLabel->setPosition(topLeftCorner + ccp(60, -100));
-            } else {
+            } else if (Mod::get()->getSettingValue<std::string>("deafen-mode") == "Discord Application") {
                 // I made a troubleshooting point on the webpage for this until the following update is verified
                 if (resDidntReturnOk) {
                     reauthLabel = CCLabelBMFont::create(("The mod made an unsuccessful request to discord \nResponse Code = " + std::to_string(responseCode) + "\nError = '" + responseError + "'\n\nTry restarting the game- if that doesn't work,\nPress the Re-Setup button to try setup again.").c_str(), "bigFont.fnt");
@@ -261,15 +261,50 @@ class ConfigLayer : public geode::Popup {
                 reauthLabel->setScale(0.4f);
                 reauthLabel->setAlignment(kCCTextAlignmentCenter);
                 reauthLabel->setPosition(topMiddle + ccp(0, -100));
-            }
+            } else {
+                enabledLabel = CCLabelBMFont::create("Enabled", "bigFont.fnt");
+                enabledLabel->setAnchorPoint({0, 0.5});
+                enabledLabel->setScale(0.7f);
+                enabledLabel->setPosition(topLeftCorner + ccp(60, -60)); // 80 = center
 
-            auto reAuthButton = CCMenuItemSpriteExtra::create(
-                ButtonSprite::create("Re-Setup"),
-                this,
-                menu_selector(ConfigLayer::runSetup)
-            );
-            reAuthButton->setAnchorPoint({0.5, 0.5});
-            reAuthButton->setPosition(topLeftCorner + ccp(142, -150));
+                enabledButton = CCMenuItemToggler::create(
+                    CCSprite::createWithSpriteFrameName("GJ_checkOff_001.png"),
+                    CCSprite::createWithSpriteFrameName("GJ_checkOn_001.png"),
+                    this,
+                    menu_selector(ConfigLayer::toggleEnabled)
+                );
+
+                enabledButton->setPosition(enabledLabel->getPosition() + ccp(140,0));
+                enabledButton->setScale(0.85f);
+                enabledButton->setClickable(true);
+                enabledButton->toggle(DEAFEN_ENABLED);
+
+                percentageInput = TextInput::create(100.f, "%");
+
+                percentageInput->setCommonFilter(geode::CommonFilter::Float);
+                percentageInput->setWidth(80);
+                percentageInput->setPosition(enabledButton->getPosition() + ccp(0, -40));
+                percentageInput->setScale(0.85f);
+                percentageInput->setMaxCharCount(7);
+                percentageInput->setEnabled(true);
+                percentageInput->setString(formatPercentageString(DEAFEN_PERCENTAGE));
+
+                percentageLabel = CCLabelBMFont::create("Percent", "bigFont.fnt");
+                percentageLabel->setAnchorPoint({0, 0.5});
+                percentageLabel->setScale(0.7f);
+                percentageLabel->setPosition(topLeftCorner + ccp(60, -100));
+            }
+            
+            CCMenuItemSpriteExtra* reAuthButton = nullptr;
+            if (Mod::get()->getSettingValue<std::string>("deafen-mode") == "Discord Application") {
+                reAuthButton = CCMenuItemSpriteExtra::create(
+                    ButtonSprite::create("Re-Setup"),
+                    this,
+                    menu_selector(ConfigLayer::runSetup)
+                );
+                reAuthButton->setAnchorPoint({0.5, 0.5});
+                reAuthButton->setPosition(topLeftCorner + ccp(142, -150));
+            }
 
             // auto debugButton = CCMenuItemSpriteExtra::create(
             // 	ButtonSprite::create("Debug"),
@@ -282,15 +317,18 @@ class ConfigLayer : public geode::Popup {
             auto menu = CCMenu::create();
             menu -> setPosition( {0, 0} );
 
-            if (ipc::authenticated) {
+            if (ipc::authenticated || Mod::get()->getSettingValue<std::string>("deafen-mode") != "Discord Application") {
                 menu -> addChild(enabledButton);
                 menu -> addChild(percentageInput);
             }
+            
+            if (Mod::get()->getSettingValue<std::string>("deafen-mode") == "Discord Application") {
+                menu -> addChild(reAuthButton);
+            }
 
-            menu -> addChild(reAuthButton);
             // menu -> addChild(debugButton);
             m_mainLayer -> addChild(topLabel);
-            if (ipc::authenticated) {
+            if (ipc::authenticated || Mod::get()->getSettingValue<std::string>("deafen-mode") != "Discord Application") {
                 m_mainLayer -> addChild(enabledLabel);
                 m_mainLayer -> addChild(percentageLabel);
             } else {

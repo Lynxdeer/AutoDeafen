@@ -1,3 +1,6 @@
+# v2.1.0
+- Ported the classic "automatically press a keybind" functionality for people who don't have their discord accounts phone verified.
+
 # v2.0.3
 ### [#2](https://github.com/Lynxdeer/AutoDeafen/pull/2/) by [@TreehouseFalcon](https://github.com/TreehouseFalcon/)
 - Added support for fractional percentages

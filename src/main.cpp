@@ -56,6 +56,42 @@ $on_mod(Loaded) {
     }
 };
 
+void sendKeyEvent(uint32_t key, int state) {
+    // Taken from the original version of this mod. It's porting, not stealing.
+    INPUT inputs[1];
+    inputs[0].type = INPUT_KEYBOARD;
+    if (key == 163 || key == 165) inputs[0].ki.dwFlags = state | KEYEVENTF_EXTENDEDKEY;
+    else inputs[0].ki.dwFlags = state;
+    inputs[0].ki.wScan = 0;
+    inputs[0].ki.wVk = key;
+
+    SendInput(1, inputs, sizeof(INPUT));
+}
+
+void deafen(bool deafen) {
+    if (Mod::get()->getSettingValue<std::string>("deafen-mode") == "Discord Application") {
+        ipc::deafen(deafen);
+    }
+    else {
+        auto keybinds = Mod::get()->getSettingValue<std::vector<geode::Keybind>>("deafen-keybind");
+
+        for (Keybind keybind : keybinds) {
+			if (keybind.modifiers.Control) sendKeyEvent(17, 0);
+			if (keybind.modifiers.Shift) sendKeyEvent(16, 0);
+			if (keybind.modifiers.Alt) sendKeyEvent(18, 0);
+
+            sendKeyEvent(keybind.key, 0);
+        }
+        for (Keybind keybind : keybinds) {
+			if (keybind.modifiers.Control) sendKeyEvent(17, 2);
+			if (keybind.modifiers.Shift) sendKeyEvent(16, 2);
+			if (keybind.modifiers.Alt) sendKeyEvent(18, 2);
+
+            sendKeyEvent(keybind.key, 2);
+		}
+    }
+}
+
 class $modify(PlayLayer) {
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
 		if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
@@ -87,10 +123,11 @@ class $modify(PlayLayer) {
     void postUpdate(float p0) {
 		PlayLayer::postUpdate(p0);
 		if (this->m_isPracticeMode && !Mod::get()->getSettingValue<bool>("practice")) { return; }
+        if (this->m_isTestMode && !Mod::get()->getSettingValue<bool>("startpos")) { return; }
     	if (!DEAFEN_ENABLED) return;
     	if (this->m_hasCompletedLevel) {
     		if (deafenedThisAttempt) {
-    			ipc::deafen(false);
+    			deafen(false);
     			deafenedThisAttempt = false;
     			hasDied = false;
     		}
@@ -98,7 +135,7 @@ class $modify(PlayLayer) {
     	}
 
 		if (getCurrentPercent() >= DEAFEN_PERCENTAGE && !deafenedThisAttempt) {
-			ipc::deafen(true);
+			deafen(true);
             deafenedThisAttempt = true;
 		}
 	}
@@ -115,7 +152,7 @@ class $modify(PlayerObject) {
         auto playLayer = PlayLayer::get();
         if (playLayer && playLayer->m_level && this == playLayer->m_player1 && !playLayer->m_level->isPlatformer()) {
             if (deafenedThisAttempt && !hasDied) {
-                ipc::deafen(false);
+                deafen(false);
                 hasDied = true;
             }
         }
@@ -128,7 +165,7 @@ class $modify(MyPauseLayer, PauseLayer) {
 	void onQuit(cocos2d::CCObject* sender) {
 		PauseLayer::onQuit(sender);
 		if (deafenedThisAttempt) {
-			ipc::deafen(false);
+			deafen(false);
 		}
 		deafenedThisAttempt = false;
 		hasDied = false;
@@ -150,13 +187,13 @@ class $modify(MyPauseLayer, PauseLayer) {
 	}
 
 	void onAutoDeafenMenuClick(CCObject* target) {
-		if (!DISCORD_ACCESS_TOKEN.empty()) {
-		// if (ipc::authenticated) {
-			openModPopup();
-		} else {
+		if (DISCORD_ACCESS_TOKEN.empty() && Mod::get()->getSettingValue<std::string>("deafen-mode") == "Discord Application") {
 			gui::openSetupPopup();
+		} else {
+			openModPopup();
 		}
 	}
+
 	void customSetup() {
         PauseLayer::customSetup();
         auto menu = this->getChildByID("right-button-menu");
