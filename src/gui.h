@@ -294,14 +294,17 @@ class ConfigLayer : public geode::Popup {
                 percentageLabel->setScale(0.7f);
                 percentageLabel->setPosition(topLeftCorner + ccp(60, -100));
             }
-
-            auto reAuthButton = CCMenuItemSpriteExtra::create(
-                ButtonSprite::create("Re-Setup"),
-                this,
-                menu_selector(ConfigLayer::runSetup)
-            );
-            reAuthButton->setAnchorPoint({0.5, 0.5});
-            reAuthButton->setPosition(topLeftCorner + ccp(142, -150));
+            
+            CCMenuItemSpriteExtra* reAuthButton = nullptr;
+            if (Mod::get()->getSettingValue<std::string>("deafen-mode") == "Discord Application") {
+                reAuthButton = CCMenuItemSpriteExtra::create(
+                    ButtonSprite::create("Re-Setup"),
+                    this,
+                    menu_selector(ConfigLayer::runSetup)
+                );
+                reAuthButton->setAnchorPoint({0.5, 0.5});
+                reAuthButton->setPosition(topLeftCorner + ccp(142, -150));
+            }
 
             // auto debugButton = CCMenuItemSpriteExtra::create(
             // 	ButtonSprite::create("Debug"),
@@ -318,8 +321,11 @@ class ConfigLayer : public geode::Popup {
                 menu -> addChild(enabledButton);
                 menu -> addChild(percentageInput);
             }
+            
+            if (Mod::get()->getSettingValue<std::string>("deafen-mode") == "Discord Application") {
+                menu -> addChild(reAuthButton);
+            }
 
-            menu -> addChild(reAuthButton);
             // menu -> addChild(debugButton);
             m_mainLayer -> addChild(topLabel);
             if (ipc::authenticated || Mod::get()->getSettingValue<std::string>("deafen-mode") != "Discord Application") {

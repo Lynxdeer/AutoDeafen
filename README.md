@@ -8,7 +8,9 @@ Configurable <cg>per-level</c> in the <co>pause menu</c> (disabled by default).
 * Configurable Percentage per-level
 * No need for a keybind! Interacts with discord via IPC
 * Configurable Global Enabling and Percentage `(In Mod Config)`
-
+  
+*NOTE: Recently ported the classic "automatically press a keybind" functionality for people who don't have their discord accounts phone verified.  
+  
 <co>Side note</c>: If you want to disable the deafen sound, go to <cj>Discord Settings</c> > <cj>Voice</c> & <cj>Video</c> > <cj>Sounds</c> > <cj>Deafen</c>
 
 If you find any issues or want to give a suggestion/feedback, feel free to DM <cj>@lynxdeer</c> on discord!
