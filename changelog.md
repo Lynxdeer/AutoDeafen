@@ -1,4 +1,7 @@
-# v2.0.3
+# v2.0.4
+- Added an "Enabled With Start Pos" setting (off by default), for deafening when playing from start positions
+
+## v2.0.3
 ### [#2](https://github.com/Lynxdeer/AutoDeafen/pull/2/) by [@TreehouseFalcon](https://github.com/TreehouseFalcon/)
 - Added support for fractional percentages
 - Updated Geode version to 5.3.0

@@ -10,7 +10,7 @@
 		"source": "https://github.com/Lynxdeer/AutoDeafen"
 	},
 	"name": "AutoDeafen",
-	"version": "v2.0.3",
+	"version": "v2.0.4",
 	"developer": "Lynxdeer",
 	"dependencies": { "geode.node-ids": ">=v1.22.0" },
 	"settings": {
@@ -34,6 +34,12 @@
 			"type": "bool",
 			"default": false,
 			"description": "Whether AutoDeafen should be enabled during practice mode. Dunno why you'd ever want this, but it's there if you do."
+		},
+		"start_pos": {
+			"name": "Enabled With Start Pos",
+			"type": "bool",
+			"default": false,
+			"description": "Whether AutoDeafen should be enabled when playing from a <co>start pos</c>."
 		}
 	}
 }

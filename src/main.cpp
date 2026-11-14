@@ -87,6 +87,7 @@ class $modify(PlayLayer) {
     void postUpdate(float p0) {
 		PlayLayer::postUpdate(p0);
 		if (this->m_isPracticeMode && !Mod::get()->getSettingValue<bool>("practice")) { return; }
+		if (this->m_startPosObject && !Mod::get()->getSettingValue<bool>("start_pos")) { return; }
     	if (!DEAFEN_ENABLED) return;
     	if (this->m_hasCompletedLevel) {
     		if (deafenedThisAttempt) {
